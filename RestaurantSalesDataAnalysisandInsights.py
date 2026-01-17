@@ -15,22 +15,16 @@ from sklearn.metrics import mean_squared_error, r2_score
 
 import gradio as gr
 
-# -----------------------------
 # STEP 2: Load Dataset
-# -----------------------------
 df = pd.read_csv('restaurant_sales_data.csv')
 
-# -----------------------------
 # STEP 3: EDA & Basic Info
-# -----------------------------
 print("Shape:", df.shape)
 print("Columns:", df.columns.tolist())
 df.info()
 print(df.describe())
 
-# -----------------------------
 # STEP 4: Data Cleaning
-# -----------------------------
 # Fill missing values
 numeric_cols = df.select_dtypes(include=['int64','float64']).columns
 categorical_cols = df.select_dtypes(include=['object']).columns
@@ -46,9 +40,7 @@ df.drop_duplicates(inplace=True)
 # Drop irrelevant columns
 df.drop(['Order ID','Customer ID','Order Date'], axis=1, inplace=True)
 
-# -----------------------------
 # STEP 5: Visualizations (EDA)
-# -----------------------------
 plt.figure(figsize=(8,5))
 sns.histplot(df['Order Total'], kde=True)
 plt.title('Distribution of Order Total')
@@ -81,9 +73,7 @@ plt.xlabel('Quantity')
 plt.ylabel('Order Total')
 plt.show()
 
-# -----------------------------
 # STEP 6: Target & Features + Encoding
-# -----------------------------
 target = 'Order Total'
 features = df.columns.drop(target)
 
@@ -96,9 +86,7 @@ y = df_encoded[target]
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
-# -----------------------------
 # STEP 7: Train-Test Split & Model
-# -----------------------------
 X_train, X_test, y_train, y_test = train_test_split(
     X_scaled, y, test_size=0.2, random_state=42
 )
@@ -111,9 +99,7 @@ y_pred = model.predict(X_test)
 print("MSE:", mean_squared_error(y_test, y_pred))
 print("R² Score:", r2_score(y_test, y_pred))
 
-# -----------------------------
 # STEP 8: Predict New Input
-# -----------------------------
 new_order = {
     'Category': 'Main Course',
     'Item': 'Chicken Biryani',
@@ -130,9 +116,7 @@ new_input_scaled = scaler.transform(df_temp_encoded.tail(1))
 predicted_sales = model.predict(new_input_scaled)
 print("Predicted Order Total:", round(predicted_sales[0],2))
 
-# -----------------------------
 # STEP 9: Deployment with Gradio
-# -----------------------------
 def predict_order_total(Category, Item, Price, Quantity, Payment_Method):
     input_data = {
         'Category': Category,
